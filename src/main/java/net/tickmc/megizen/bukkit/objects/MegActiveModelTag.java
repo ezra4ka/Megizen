@@ -187,6 +187,16 @@ public class MegActiveModelTag implements ObjectTag, Adjustable {
             }
             return new ElementTag(object.getActiveModel().getMountManager().get().canDrive());
         });
+        tagProcessor.registerTag(ElementTag.class, "finished_animations", (attribute, object) -> {
+            if (object.getActiveModel().getMountManager().isEmpty()){
+                return null;
+            }
+
+            if (object.getActiveModel().getAnimationHandler().getAnimations().isEmpty()) {
+                return new ElementTag(true);
+            }
+            return new ElementTag(object.getActiveModel().getAnimationHandler().hasFinishedAllAnimations());
+        });
 
         // <--[tag]
         // @attribute <MegActiveModelTag.can_ride>
@@ -200,6 +210,17 @@ public class MegActiveModelTag implements ObjectTag, Adjustable {
                 return null;
             }
             return new ElementTag(object.getActiveModel().getMountManager().get().canRide());
+        });
+        tagProcessor.registerTag(MapTag.class, "animations_placeholders", (attribute, object) -> {
+            MapTag map = new MapTag();
+            for (String model : object.getActiveModel().getBlueprint().getAnimationsPlaceholders().keySet()) {
+                String value = object.getActiveModel().getBlueprint().getAnimationsPlaceholders().get(model);
+                if (value == null) {
+                    continue;
+                }
+                map.putObject(model,new ElementTag(value));
+            }
+            return map;
         });
 
         // <--[tag]
